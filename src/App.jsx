@@ -1,45 +1,40 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
+import React, { useRef } from "react";
+import emailjs from "@emailjs/browser";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const form = useRef();
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+
+    emailjs
+      .sendForm(
+        import.meta.env.VITE_SERVICE_ID,
+        import.meta.env.VITE_TEMPLATE_ID,
+        form.current,
+        import.meta.env.VITE_PUBLIC_KEY
+      )
+      .then(
+        (result) => {
+          console.log(result.text);
+        },
+        (error) => {
+          console.log(error.text);
+        }
+      );
+  };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.jsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
-  )
-}
+    <form ref={form} onSubmit={sendEmail}>
+      <label>Name</label>
+      <input type="text" name="from_email" />
+      <label>Email</label>
+      <input type="email" name="from_name" />
+      <label>Message</label>
+      <textarea name="message" />
+      <input type="submit" value="Send" />
+    </form>
+  );
+};
 
-export default App
+export default App;
